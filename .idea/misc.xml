@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/USER/Documents/GitHub/gifticon_management/app/src/main/res/drawable/round.xml" value="0.1" />
         <entry key="..\:/Users/USER/Documents/GitHub/gifticon_management/app/src/main/res/layout/activity_main.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/USER/Documents/GitHub/gifticon_management/app/src/main/res/layout/fragment_gifticon_input.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/USER/Documents/GitHub/gifticon_management/app/src/main/res/layout/gifticon_ui.xml" value="0.2526041666666667" />
       </map>
     </option>
