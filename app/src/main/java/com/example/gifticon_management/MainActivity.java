@@ -70,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
         }
     */
 
-
+        dataList.addAll(database.mainDao().getAll());
+        adapter.notifyDataSetChanged();
 
     }
 }

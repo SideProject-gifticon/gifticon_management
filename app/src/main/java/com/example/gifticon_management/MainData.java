@@ -1,6 +1,7 @@
 package com.example.gifticon_management;
 
 import android.graphics.Bitmap;
+import android.widget.TextView;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -16,6 +17,7 @@ public class MainData implements Serializable {
     @ColumnInfo(name="text")
     private String text;
     private Bitmap image;
+    private String date_text;
 
     public int getId(){
         return id;
@@ -39,5 +41,13 @@ public class MainData implements Serializable {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getDate_text() {
+        return date_text;
+    }
+
+    public void setDate_text(String date_text) {
+        this.date_text = date_text;
     }
 }

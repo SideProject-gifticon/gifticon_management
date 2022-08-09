@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".gifticon_input_Fragment">
+    tools:context=".gifticon_input">
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/Cardview_input_img"
@@ -21,7 +22,7 @@
         tools:ignore="MissingConstraints">
 
         <ImageView
-            android:id="@+id/gifticon_image"
+            android:id="@+id/imageView_gifticon_input"
             android:layout_width="250dp"
             android:layout_height="250dp"
             android:background="@drawable/round"
@@ -74,7 +75,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/round"
-        android:onClick="onClickHandler"
         android:text="만료 날짜 선택 버튼"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -121,7 +121,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/round"
-        android:text="등록"
+        android:text="취소"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
