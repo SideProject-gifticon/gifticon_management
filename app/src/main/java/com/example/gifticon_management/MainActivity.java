@@ -5,9 +5,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -16,6 +21,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerviewAdapter adapter;
+    FloatingActionButton gifticon_add_button;
 
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
@@ -30,11 +36,22 @@ public class MainActivity extends AppCompatActivity {
         dataList = database.mainDao().getAll();
 
         recyclerView = findViewById(R.id.recyclerView);
+        gifticon_add_button = (FloatingActionButton) findViewById(R.id.gifticon_add_button);
         int numColumns = 3;
         recyclerView.setLayoutManager(new GridLayoutManager(this, numColumns));
 
         adapter = new RecyclerviewAdapter(MainActivity.this, dataList);
         recyclerView.setAdapter(adapter);
+
+
+        gifticon_add_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, gifticon_input.class);
+                startActivity(intent);
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         // 데이터 모두 삭제
         /*
@@ -69,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         }
     */
-
+        dataList.clear();
         dataList.addAll(database.mainDao().getAll());
         adapter.notifyDataSetChanged();
 

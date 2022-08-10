@@ -26,7 +26,9 @@
             android:layout_width="250dp"
             android:layout_height="250dp"
             android:background="@drawable/round"
-            android:src="@drawable/ic_launcher_background" />
+            android:onClick="mOnclick"
+            android:src="@drawable/ic_launcher_background"
+            tools:ignore="OnClick" />
     </androidx.cardview.widget.CardView>
 
     <TextView

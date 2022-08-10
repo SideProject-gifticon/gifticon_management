@@ -6,17 +6,24 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.Delayed;
 
 public class gifticon_input extends AppCompatActivity {
 
@@ -33,6 +40,9 @@ public class gifticon_input extends AppCompatActivity {
     String date;
 
 
+
+    static final int REQUEST_CODE = 1;
+    Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +65,25 @@ public class gifticon_input extends AppCompatActivity {
 
 
 
+        //갤러리 나오게 선택
+        imageView_gifticon_input.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickImageView(view);
+
+                if(uri != null){
+                    setImage(uri);
+                }
+
+            }
+        });
+
         //기프티콘 만료 날짜 입력 버튼
         date_input_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mOnClick_DatePick(view);
 
-                //저장까지한다면 ->1
             }
         });
 
@@ -71,15 +93,27 @@ public class gifticon_input extends AppCompatActivity {
            public void onClick(View view) {
                //입력받은거
                MainData temp = new MainData();
-               temp.setText(name_text_input.toString());
+               temp.setText(name_text_input.getText().toString());
                //1. 여기서 날짜 저장변수 따로 다시 입력 저장?
                temp.setDate_text(date);
-               //갤러리에서 이미지 선택하기 변경 필요
-               Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample2);
-               temp.setImage(bitmap);
+               //갤러리 이미지 절대 경로 저장
+               try {
+                   InputStream in = getContentResolver().openInputStream(uri);
+                   Bitmap bitmap = BitmapFactory.decodeStream(in);
+                   temp.setImage(bitmap);
+               } catch (FileNotFoundException e) {
+                   e.printStackTrace();
+               }
                database.mainDao().insert(temp);
+               dataList.addAll(database.mainDao().getAll());
 
-               finish();
+               new Handler().postDelayed(new Runnable() {
+                   @Override
+                   public void run() {
+                       finish();
+                   }
+               },400);
+
            }
        });
 
@@ -112,6 +146,35 @@ public class gifticon_input extends AppCompatActivity {
     public void mOnClick_DatePick(View v){
         Calendar cal = Calendar.getInstance();
         new DatePickerDialog(this, mDateSetListener, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE)).show();
+    }
+
+
+    //갤러리 소환
+    public void onClickImageView(View v){
+        Intent intent_img = new Intent(Intent.ACTION_PICK);
+        intent_img.setType(MediaStore.Images.Media.CONTENT_TYPE);
+        startActivityForResult(intent_img,REQUEST_CODE);
+    }
+
+
+    @Override
+    protected  void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if (requestCode == REQUEST_CODE) {
+            uri = data.getData();
+        }
+    }
+
+
+    //이미지 뷰 보여주기
+    private void setImage(Uri uri) {
+        try{
+            InputStream in = getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(in);
+            imageView_gifticon_input.setImageBitmap(bitmap);
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
     }
 
 }
