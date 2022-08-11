@@ -14,9 +14,12 @@
         android:theme="@style/Theme.Gifticon_management"
         tools:targetApi="31">
         <activity
-            android:name=".gifticon_input"
-            android:exported="true">
-        </activity>
+            android:name=".gifticon_touch_activity"
+            android:exported="false" />
+         <activity
+         android:name=".gifticon_input"
+         android:exported="true">
+         </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">

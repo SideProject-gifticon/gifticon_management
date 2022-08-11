@@ -41,6 +41,17 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
         dataList = list;
     }
 
+    // 터치 이벤트
+    public interface OnItemClickListener{
+        void onItemClicked(int position, String data);
+    }
+
+    private OnItemClickListener itemClickListener;
+
+    public void setOnItemClickListener (OnItemClickListener listener){
+        itemClickListener = listener;
+    }
+
     @NonNull
     @Override
     public RecyclerviewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -50,6 +61,20 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
         View view = inflater.inflate(R.layout.gifticon_ui, parent, false);
         RecyclerviewAdapter.ViewHolder vh = new RecyclerviewAdapter.ViewHolder(view);
 
+
+        // 터치 이벤트
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String data="";
+                int pos = vh.getAdapterPosition();
+                if(pos != RecyclerView.NO_POSITION){
+                    data = vh.getTextView().getText().toString();
+                }
+                itemClickListener.onItemClicked(pos,data);
+            }
+        });
         return vh;
     }
 
@@ -84,7 +109,10 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
             imageView = itemView.findViewById(R.id.gifticon_image);
             textView = itemView.findViewById((R.id.gifticon_name));
         }
-    }
 
+        public TextView getTextView(){
+            return textView;
+        }
+    }
 
 }
