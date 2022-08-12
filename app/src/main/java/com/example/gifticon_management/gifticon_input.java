@@ -36,7 +36,7 @@ public class gifticon_input extends AppCompatActivity {
     Button gifticon_input_button;
     Button gifticon_cancellation_button;
 
-    RecyclerviewAdapter adapter;
+    //RecyclerviewAdapter adapter;
 
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
@@ -67,7 +67,7 @@ public class gifticon_input extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         date_input_text.setText(cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE));
 
-        adapter = new RecyclerviewAdapter(this, dataList);
+        //adapter = new RecyclerviewAdapter(this, dataList);
 
 
         //갤러리 나오게 선택
@@ -107,7 +107,8 @@ public class gifticon_input extends AppCompatActivity {
                }
                database.mainDao().insert(temp);
                dataList.addAll(database.mainDao().getAll());
-               adapter.notifyDataSetChanged();
+               //adapter.notifyDataSetChanged();
+               setResult(9001); // 확인 버튼 누르면 resultcode 9001을 메인 액티비티로 보냄
 
                new Handler().postDelayed(new Runnable() {
                    @Override

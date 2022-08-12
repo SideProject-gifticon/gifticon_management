@@ -1,9 +1,13 @@
 package com.example.gifticon_management;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.OnConflictStrategy;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
+
+    ActivityResultLauncher<Intent> activityResultLauncher; // 기프티콘 추가 액티비티 실행할 때 필요
 
 
     @Override
@@ -65,10 +71,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, gifticon_input.class);
-                startActivity(intent);
-                adapter.notifyDataSetChanged();
+                activityResultLauncher.launch(intent); // 기프티콘 추가 액티비티 시작
+                //startActivity(intent);
             }
         });
+
+        activityResultLauncher = registerForActivityResult( // 기프티콘 추가 액티비티에서 확인 버튼 누르면 실행됨
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if(result.getResultCode()==9001){
+                        dataList.clear();
+                        dataList.addAll(database.mainDao().getAll());
+                        adapter.notifyDataSetChanged(); // 새로 추가한 데이터 갱신
+                    }
+                });
+
+
 
         // 데이터 모두 삭제
 
