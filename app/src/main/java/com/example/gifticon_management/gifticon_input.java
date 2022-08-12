@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -33,6 +35,8 @@ public class gifticon_input extends AppCompatActivity {
     TextView date_input_text;
     Button gifticon_input_button;
     Button gifticon_cancellation_button;
+
+    RecyclerviewAdapter adapter;
 
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
@@ -63,6 +67,7 @@ public class gifticon_input extends AppCompatActivity {
         Calendar cal = Calendar.getInstance();
         date_input_text.setText(cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE));
 
+        adapter = new RecyclerviewAdapter(this, dataList);
 
 
         //갤러리 나오게 선택
@@ -70,10 +75,6 @@ public class gifticon_input extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 onClickImageView(view);
-
-                if(uri != null){
-                    setImage(uri);
-                }
 
             }
         });
@@ -106,6 +107,7 @@ public class gifticon_input extends AppCompatActivity {
                }
                database.mainDao().insert(temp);
                dataList.addAll(database.mainDao().getAll());
+               adapter.notifyDataSetChanged();
 
                new Handler().postDelayed(new Runnable() {
                    @Override
@@ -162,6 +164,7 @@ public class gifticon_input extends AppCompatActivity {
         super.onActivityResult(requestCode,resultCode,data);
         if (requestCode == REQUEST_CODE) {
             uri = data.getData();
+            setImage(uri);
         }
     }
 
