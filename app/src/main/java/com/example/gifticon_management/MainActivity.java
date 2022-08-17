@@ -3,7 +3,10 @@ package com.example.gifticon_management;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,9 +16,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
 import android.view.WindowManager;
 import android.widget.Toast;
 import java.lang.reflect.Array;
@@ -26,7 +32,11 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerviewAdapter adapter;
     FloatingActionButton gifticon_add_button;
-    GificonDailog gificonDailog;
+    //GificonDailog gificonDailog;
+    NavigationView navigationView;
+    DrawerLayout drawerLayout;
+    ActionBarDrawerToggle barDrawerToggle;
+
 
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
@@ -39,12 +49,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 다이얼로그 밖의 화면은 흐리게 만들어줌
+        // 네비게이션 뷰
+        navigationView = findViewById(R.id.navigationView);
+        drawerLayout = findViewById(R.id.layout_drawer);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch(item.getItemId()){
+                    case R.id.menu_setting: // 설정 눌렀을 때
+                        Intent intent = new Intent(MainActivity.this, settingActivity.class);
+                        startActivity(intent); // 설정 창 실행
+                        break;
+                }
+                // Drawer 닫기
+                drawerLayout.closeDrawer(navigationView);
+                return false;
+            }
+        });
 
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        layoutParams.dimAmount = 0.5f;
-        getWindow().setAttributes(layoutParams);
+        // 누르면 Drawer 열리는 삼선 모양 버튼
+        barDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        barDrawerToggle.syncState();
+        drawerLayout.addDrawerListener(barDrawerToggle);
+
 
         database = RoomDB.getInstance(this);
         dataList = database.mainDao().getAll();
@@ -112,5 +140,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    @Override // 네비게이션 뷰의 메뉴를 터치했을 때 실행
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        barDrawerToggle.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".settingActivity">
+
+    <TextView
+        android:id="@+id/alarmTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:textSize="20sp"
+        android:text="알림 설정"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settingTextview" />
+
+    <TextView
+        android:id="@+id/settingTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp"
+        android:text="설정"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/alarmButton_3days"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="기프티콘 만료 3일 전 알림"
+        app:layout_constraintStart_toStartOf="@+id/alarmTextview"
+        app:layout_constraintTop_toBottomOf="@+id/alarmTextview" />
+
+    <Button
+        android:id="@+id/alarmButton_7days"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="기프티콘 만료 7일 전 알림"
+        app:layout_constraintStart_toStartOf="@+id/alarmTextview"
+        app:layout_constraintTop_toBottomOf="@+id/alarmButton_3days" />
+
+    <Button
+        android:id="@+id/QuestionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:text="문의사항"
+        app:layout_constraintStart_toStartOf="@+id/alarmTextview"
+        app:layout_constraintTop_toBottomOf="@+id/alarmButton_7days" />
+
+    <TextView
+        android:id="@+id/appVersionTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="앱버전 1.0.0"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/alarmTextview"
+        app:layout_constraintTop_toBottomOf="@+id/QuestionButton" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
