@@ -88,7 +88,11 @@ public class MainActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerviewAdapter.OnItemClickListener() {
             @Override
             public void onItemClicked(int position, String data) {
+                //여기에 intent 정보 전달
                 Intent intent = new Intent(MainActivity.this, gifticon_touch_activity.class);
+                intent.putExtra("name",dataList.get(position).getText());
+                intent.putExtra("date",dataList.get(position).getDate_text());
+                intent.putExtra("image_gif",dataList.get(position).getImage());
                 startActivity(intent);
             }
         });

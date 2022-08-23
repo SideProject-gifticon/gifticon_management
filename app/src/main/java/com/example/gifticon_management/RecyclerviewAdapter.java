@@ -2,6 +2,7 @@ package com.example.gifticon_management;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -71,6 +72,11 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
                 int pos = vh.getAdapterPosition();
                 if(pos != RecyclerView.NO_POSITION){
                     data = vh.getTextView().getText().toString();
+//                    Intent intent = new Intent(view.getContext(), gifticon_touch_activity.class);
+//                    intent.putExtra("name",dataList.get(pos).getText());
+//                    intent.putExtra("date",dataList.get(pos).getDate_text());
+//                    intent.putExtra("image_gif",dataList.get(pos).getImage());
+//                    view.getContext().startActivity(intent);
                 }
                 itemClickListener.onItemClicked(pos,data);
             }
