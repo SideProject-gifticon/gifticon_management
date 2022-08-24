@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, gifticon_touch_activity.class);
                 intent.putExtra("name",dataList.get(position).getText());
                 intent.putExtra("date",dataList.get(position).getDate_text());
-                intent.putExtra("image_gif",dataList.get(position).getImage());
+                //intent.putExtra("image_gif",dataList.get(position).getImage());
                 startActivity(intent);
             }
         });

@@ -45,11 +45,11 @@ public class gifticon_touch_activity extends AppCompatActivity {
 
         name = intent.getStringExtra("name");
         date = intent.getStringExtra("date");
-        image = intent.getParcelableExtra("image_gif");
+        //image = intent.getParcelableExtra("image_gif");
 
 
         //데이터 세팅
-        imageView_gifticon_touch.setImageBitmap(image);
+        //imageView_gifticon_touch.setImageBitmap(image);
         name_text_touch.setText(name);
         date_text_touch.setText(date);
 
