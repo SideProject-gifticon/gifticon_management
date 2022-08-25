@@ -94,7 +94,11 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, gifticon_touch_activity.class);
                 intent.putExtra("name",dataList.get(position).getText());
                 intent.putExtra("date",dataList.get(position).getDate_text());
-                //intent.putExtra("image_gif",dataList.get(position).getImage());
+                //날짜 입력
+                intent.putExtra("year", dataList.get(position).getYy());
+                intent.putExtra("month",dataList.get(position).getMm());
+                intent.putExtra("day", dataList.get(position).getDd());
+                //이미지 입력
                 Bitmap sendBitmap = dataList.get(position).getImage();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 sendBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);

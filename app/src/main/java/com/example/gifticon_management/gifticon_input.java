@@ -43,6 +43,10 @@ public class gifticon_input extends AppCompatActivity {
 
     String date;
 
+    int year;
+    int month;
+    int day;
+
 
 
     static final int REQUEST_CODE = 1;
@@ -97,6 +101,9 @@ public class gifticon_input extends AppCompatActivity {
                temp.setText(name_text_input.getText().toString());
                //1. 여기서 날짜 저장변수 따로 다시 입력 저장?
                temp.setDate_text(date);
+               temp.setYy(year);
+               temp.setMm(month);
+               temp.setDd(day);
                //갤러리 이미지 절대 경로 저장
                try {
                    InputStream in = getContentResolver().openInputStream(uri);
@@ -143,6 +150,11 @@ public class gifticon_input extends AppCompatActivity {
                     date_input_text.setText(String.format("%d-%d-%d", yy,mm+1,dd));
 
                     date = String.format("%d-%d-%d", yy,mm+1,dd);
+                    //날짜 변수 저장
+                    year = yy;
+                    month = mm;
+                    day = dd;
+
                 }};
 
 

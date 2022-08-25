@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Calendar;
+
 public class gifticon_touch_activity extends AppCompatActivity {
 
     ImageView imageView_gifticon_touch;
@@ -27,6 +29,26 @@ public class gifticon_touch_activity extends AppCompatActivity {
     String date;
     Bitmap image;
 
+    //intent로 가져온 변수
+    int year;
+    int month;
+    int day;
+
+    //오늘 날짜 변수
+    int yy;
+    int mm;
+    int dd;
+
+    //D-day 변수
+    private  int dYear=1;
+    private  int dMonth=1;
+    private  int dDay=1;
+
+    private  long d;
+    private  long t;
+    private  long r;
+
+    private int resultNumber=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,16 +69,38 @@ public class gifticon_touch_activity extends AppCompatActivity {
         name = intent.getStringExtra("name");
         date = intent.getStringExtra("date");
         //image = intent.getParcelableExtra("image_gif");
-        byte[] arr = getIntent().getByteArrayExtra("image_gif");
+        byte[] arr = intent.getByteArrayExtra("image_gif");
         image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
 
-
+        year = intent.getIntExtra("year",2022);
+        month = intent.getIntExtra("month",5);
+        day = intent.getIntExtra("day", 25);
 
         //데이터 세팅
         imageView_gifticon_touch.setImageBitmap(image);
         name_text_touch.setText(name);
-        date_text_touch.setText(date);
+        date_text_touch.setText("만료 날짜 : "+date);
+
+        //d-day 계산산
+
+        Calendar calendar = Calendar.getInstance(); //현재 날짜 불러옴
+        yy = calendar.get(Calendar.YEAR);
+        mm = calendar.get(Calendar.MONTH);
+        dd = calendar.get(Calendar.DAY_OF_MONTH);
+
+        Calendar dCalendar = Calendar.getInstance();
+        dCalendar.set(year,month,day);
+
+        //오늘 날짜를 밀리타임으로 변경
+        t = calendar.getTimeInMillis();
+        d = dCalendar.getTimeInMillis();
+        r = (d-t)/(24*60*60*1000);
+
+        resultNumber = (int)r;
+        updateDisplay();
+
+       // date_d_day.
 
 
         //버튼 셋팅
@@ -75,5 +119,16 @@ public class gifticon_touch_activity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void updateDisplay(){
+
+        if(resultNumber>=0){
+            date_d_day.setText(String.format("D - %d",resultNumber));
+        }else{
+            int absR = Math.abs(resultNumber);
+            date_d_day.setText(String.format("D + %d",absR));
+        }
+
     }
 }

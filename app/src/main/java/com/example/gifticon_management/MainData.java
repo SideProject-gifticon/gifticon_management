@@ -19,6 +19,9 @@ public class MainData implements Serializable {
     private String text;//이름
     private Bitmap image;//이미지
     private String date_text;//날짜
+    private int yy; //년도
+    private int mm; //월
+    private int dd; //날짜
 
     public int getId(){
         return id;
@@ -50,5 +53,29 @@ public class MainData implements Serializable {
 
     public void setDate_text(String date_text) {
         this.date_text = date_text;
+    }
+
+    public int getDd() {
+        return dd;
+    }
+
+    public void setDd(int dd) {
+        this.dd = dd;
+    }
+
+    public int getMm() {
+        return mm;
+    }
+
+    public void setMm(int mm) {
+        this.mm = mm;
+    }
+
+    public int getYy() {
+        return yy;
+    }
+
+    public void setYy(int yy) {
+        this.yy = yy;
     }
 }
