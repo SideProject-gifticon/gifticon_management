@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
@@ -46,10 +47,14 @@ public class gifticon_touch_activity extends AppCompatActivity {
         name = intent.getStringExtra("name");
         date = intent.getStringExtra("date");
         //image = intent.getParcelableExtra("image_gif");
+        byte[] arr = getIntent().getByteArrayExtra("image_gif");
+        image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+
+
 
 
         //데이터 세팅
-        //imageView_gifticon_touch.setImageBitmap(image);
+        imageView_gifticon_touch.setImageBitmap(image);
         name_text_touch.setText(name);
         date_text_touch.setText(date);
 

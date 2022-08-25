@@ -24,6 +24,8 @@ import com.google.android.material.navigation.NavigationView;
 
 import android.view.WindowManager;
 import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("name",dataList.get(position).getText());
                 intent.putExtra("date",dataList.get(position).getDate_text());
                 //intent.putExtra("image_gif",dataList.get(position).getImage());
+                Bitmap sendBitmap = dataList.get(position).getImage();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                sendBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] byteArray = stream.toByteArray();intent.putExtra("image_gif",byteArray);
+
                 startActivity(intent);
             }
         });
