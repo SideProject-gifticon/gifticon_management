@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
@@ -109,6 +113,18 @@ public class gifticon_touch_activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //사용완료하면 데이터 저장 따로 해야할듯;
+
+                // 이미지 흑백으로 변환
+                ColorMatrix matrix = new ColorMatrix();
+                matrix.setSaturation(0);
+                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                imageView_gifticon_touch.setColorFilter(filter);
+
+                //Bitmap img2;
+                Bitmap overlayBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.used);
+                //overlayImg(image, overlayBitmap);
+                imageView_gifticon_touch.setImageBitmap(overlayImg(image, overlayBitmap));
+
             }
         });
         //취소하면 다시 메인으로 돌아가기
@@ -129,6 +145,21 @@ public class gifticon_touch_activity extends AppCompatActivity {
             int absR = Math.abs(resultNumber);
             date_d_day.setText(String.format("D + %d",absR));
         }
+    }
 
+    private Bitmap overlayImg(Bitmap originalBitmap, Bitmap overlayBitmap)
+    {
+        int width = Math.min(originalBitmap.getWidth(), overlayBitmap.getWidth());
+        int height = Math.min(originalBitmap.getHeight(), overlayBitmap.getHeight());
+
+        Bitmap resizedOriginalBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
+        Bitmap resizedOverlayBitmap = Bitmap.createScaledBitmap(overlayBitmap, width, height, false);
+
+        Bitmap combinedBitmap = Bitmap.createBitmap(width, height, resizedOriginalBitmap.getConfig());
+        Canvas canvas = new Canvas(combinedBitmap);
+        canvas.drawBitmap(resizedOriginalBitmap, 0, 0, null);
+        canvas.drawBitmap(resizedOverlayBitmap, 0, 0, null);
+        
+        return combinedBitmap;
     }
 }

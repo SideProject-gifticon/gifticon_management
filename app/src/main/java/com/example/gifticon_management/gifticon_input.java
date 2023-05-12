@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -192,5 +193,7 @@ public class gifticon_input extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
 
 }
