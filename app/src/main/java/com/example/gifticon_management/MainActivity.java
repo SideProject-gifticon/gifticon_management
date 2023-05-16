@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.OnConflictStrategy;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -107,8 +109,36 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        recyclerView.setAdapter(adapter);
 
+
+
+        //기프티콘 롱 터치 이벤트
+        adapter.setOnItemLongClickListener(new RecyclerviewAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View v, int pos) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("삭제/수정");
+                builder.setMessage("삭제 하실겁니까?");
+
+                //다이얼로그 이벤트 처리
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //확인 누르면 삭제
+                        database.mainDao().delete(dataList.remove(pos));
+                        adapter.notifyItemRemoved(pos);
+                    }
+                });
+
+                builder.setNegativeButton("취소",null);
+
+                //다이얼로그 표시
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+        recyclerView.setAdapter(adapter);
 
         gifticon_add_button.setOnClickListener(new View.OnClickListener() {
             @Override

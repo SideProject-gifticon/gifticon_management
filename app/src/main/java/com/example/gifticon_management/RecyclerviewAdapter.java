@@ -1,7 +1,10 @@
 package com.example.gifticon_management;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +14,7 @@ import android.view.ContentInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,13 +49,31 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
     // 터치 이벤트
     public interface OnItemClickListener{
         void onItemClicked(int position, String data);
+
+    }
+
+
+    public interface OnItemLongClickListener
+    {
+        void onItemLongClick(View v, int pos);
     }
 
     private OnItemClickListener itemClickListener;
+    private OnItemLongClickListener mLongListener = null;
+
+
+
 
     public void setOnItemClickListener (OnItemClickListener listener){
         itemClickListener = listener;
     }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener)
+    {
+        this.mLongListener = listener;
+    }
+
+
 
     @NonNull
     @Override
@@ -77,10 +99,29 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
 //                    intent.putExtra("date",dataList.get(pos).getDate_text());
 //                    intent.putExtra("image_gif",dataList.get(pos).getImage());
 //                    view.getContext().startActivity(intent);
+                    itemClickListener.onItemClicked(pos,data);
                 }
-                itemClickListener.onItemClicked(pos,data);
+                //itemClickListener.onItemClicked(pos,data);
             }
         });
+
+        //롱터치 이벤트
+        view.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
+            {
+                int pos = vh.getAdapterPosition();
+                if (pos != RecyclerView.NO_POSITION)
+                {
+                    mLongListener.onItemLongClick(v, pos);
+                }
+                return true;
+            }
+        });
+
+
+
         return vh;
     }
 
@@ -120,5 +161,35 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
             return textView;
         }
     }
+
+
+//    private void showDialog(int pos){
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        builder.setTitle("선택해주세요");
+//        builder.setMessage("삭제 하실겁니까?");
+//
+//        //다이얼로그 이벤트 처리
+//        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                //확인 누르면 삭제
+//
+//            }
+//        });
+//
+//        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                //취소 로직
+//
+//            }
+//        });
+//
+//        //다이얼로그 표시
+//        AlertDialog dialog = builder.create();
+//        dialog.show();
+//    }
+
+
 
 }
