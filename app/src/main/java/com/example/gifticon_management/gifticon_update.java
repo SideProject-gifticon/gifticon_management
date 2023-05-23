@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -123,6 +124,7 @@ public class gifticon_update extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 MainData data = new MainData();
+                data.setId(id);
                 data.setText(name_text_update.getText().toString());
                 //날짜
                 data.setDate_text(date);
@@ -130,19 +132,27 @@ public class gifticon_update extends AppCompatActivity {
                 data.setMm(month);
                 data.setDd(day);
                 //갤러리
-                try {
-                    InputStream in = getContentResolver().openInputStream(uri);
-                    Bitmap bitmap = BitmapFactory.decodeStream(in);
-                    data.setImage(bitmap);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                if(uri!=null){
+                    try {
+                        InputStream in = getContentResolver().openInputStream(uri);
+                        Bitmap bitmap = BitmapFactory.decodeStream(in);
+                        data.setImage(bitmap);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
+                else{
+                    data.setImage(image);
+                }
+
                 //설정된 데이터들을 저장하는데 이떄 해당하는 id 번호에 따라 바꿔주기
-                database.mainDao().updateGifticon(data);
+                database.mainDao().update(data);
+
                 //dataList.addAll(database.mainDao().getAll());
                 //dataList.set(id,database.mainDao().getAll().get(id));
                 dataList.clear();
                 dataList.addAll(database.mainDao().getAll());
+                //Log.d("list", dataList.get(0).getText());
                 //adapter.notifyDataSetChanged();
                 setResult(9001); // 확인 버튼 누르면 resultcode 9001을 메인 액티비티로 보냄
 
@@ -199,7 +209,7 @@ public class gifticon_update extends AppCompatActivity {
 
 
     @Override
-    protected  void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode,resultCode,data);
         if (requestCode == REQUEST_CODE) {
             uri = data.getData();

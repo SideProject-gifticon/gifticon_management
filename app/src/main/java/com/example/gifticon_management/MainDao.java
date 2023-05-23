@@ -23,7 +23,7 @@ public interface MainDao {
     void reset(List<MainData> mainData);
 
     @Update
-    void updateGifticon(MainData mainData);
+    void update(MainData mainData);
 
 
     @Query("SELECT * FROM table_name")
