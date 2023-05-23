@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClicked(int position, String data) {
                 //여기에 intent 정보 전달
                 Intent intent = new Intent(MainActivity.this, gifticon_touch_activity.class);
+                intent.putExtra("id",dataList.get(position).getId());
                 intent.putExtra("name",dataList.get(position).getText());
                 intent.putExtra("date",dataList.get(position).getDate_text());
                 //날짜 입력
@@ -100,7 +101,8 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap sendBitmap = dataList.get(position).getImage();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 sendBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                byte[] byteArray = stream.toByteArray();intent.putExtra("image_gif",byteArray);
+                byte[] byteArray = stream.toByteArray();
+                intent.putExtra("image_gif",byteArray);
 
                 startActivity(intent);
             }
@@ -126,30 +128,7 @@ public class MainActivity extends AppCompatActivity {
                         adapter.notifyItemRemoved(pos);
                     }
                 });
-                //수정버튼
-                builder.setNeutralButton("수정", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Intent intent = new Intent(MainActivity.this, gifticon_update.class);
-                        //수정시 필요한 아이디 넘기기
-                        intent.putExtra("id",pos);
-                        intent.putExtra("name",dataList.get(pos).getText());
-                        intent.putExtra("date",dataList.get(pos).getDate_text());
-                        //날짜 입력
-                        intent.putExtra("year", dataList.get(pos).getYy());
-                        intent.putExtra("month",dataList.get(pos).getMm());
-                        intent.putExtra("day", dataList.get(pos).getDd());
-                        //이미지 입력
-                        Bitmap sendBitmap = dataList.get(pos).getImage();
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        sendBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        byte[] byteArray = stream.toByteArray();intent.putExtra("image_gif",byteArray);
 
-                        startActivity(intent);
-                        adapter.notifyDataSetChanged(); // 새로 추가한 데이터 갱신
-
-                    }
-                });
 
                 //취소버튼
                 builder.setNegativeButton("취소",null);

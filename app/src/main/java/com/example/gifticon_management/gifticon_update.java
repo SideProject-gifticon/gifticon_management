@@ -34,7 +34,7 @@ public class gifticon_update extends AppCompatActivity {
 
     //RecyclerviewAdapter adapter;
 
-    Intent intent;
+    Intent intentUpdate;
 
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
@@ -77,20 +77,20 @@ public class gifticon_update extends AppCompatActivity {
         //이전 액티비에서 수정버튼 클릭시 데이터 받아오기
         //intent값 가져오기
 
-        intent = getIntent();
+        intentUpdate = getIntent();
 
         //받아온 데이터들 각각에 맞게 세팅해주기
-        id = intent.getIntExtra("id",1);
-        name = intent.getStringExtra("name");
-        date = intent.getStringExtra("date");
+        id = intentUpdate.getIntExtra("id",1);
+        name = intentUpdate.getStringExtra("name");
+        date = intentUpdate.getStringExtra("date");
         //image = intent.getParcelableExtra("image_gif");
-        byte[] arr = intent.getByteArrayExtra("image_gif");
+        byte[] arr = intentUpdate.getByteArrayExtra("image_gif");
         image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
 
 
-        year = intent.getIntExtra("year",2022);
-        month = intent.getIntExtra("month",5);
-        day = intent.getIntExtra("day", 25);
+        year = intentUpdate.getIntExtra("year",2022);
+        month = intentUpdate.getIntExtra("month",5);
+        day = intentUpdate.getIntExtra("day", 25);
 
         //데이터 세팅
         imageView_gifticon_update.setImageBitmap(image);

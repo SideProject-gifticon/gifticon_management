@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 
 public class gifticon_touch_activity extends AppCompatActivity {
@@ -36,6 +37,7 @@ public class gifticon_touch_activity extends AppCompatActivity {
     Bitmap image;
 
     //intent로 가져온 변수
+    int id;
     int year;
     int month;
     int day;
@@ -73,6 +75,7 @@ public class gifticon_touch_activity extends AppCompatActivity {
 
         intent = getIntent();
 
+        id = intent.getIntExtra("id",1);
         name = intent.getStringExtra("name");
         date = intent.getStringExtra("date");
         //image = intent.getParcelableExtra("image_gif");
@@ -144,8 +147,22 @@ public class gifticon_touch_activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //클릭시 수정하는 화면으로 이동해야함.
+                Intent intent = new Intent(gifticon_touch_activity.this, gifticon_update.class);
+                //이동시 아이디, 이미지, 날짜, 이름 데이터 넘겨줘야합니다.
+                //수정시 필요한 아이디 넘기기
+                intent.putExtra("id",id);
+                intent.putExtra("name",name);
+                intent.putExtra("date",date);
+                //날짜 입력
+                intent.putExtra("year", year);
+                intent.putExtra("month",month);
+                intent.putExtra("day", day);
+                //이미지 입력
+                byte[] arr = intent.getByteArrayExtra("image_gif");
+                intent.putExtra("image_gif",arr);
 
-                //이동시 이미지, 날짜, 이름 데이터 넘겨줘야합니다.
+                startActivity(intent);
+
 
             }
         });
