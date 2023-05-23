@@ -138,7 +138,7 @@ public class gifticon_update extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 //설정된 데이터들을 저장하는데 이떄 해당하는 id 번호에 따라 바꿔주기
-                database.mainDao().update(id,data);
+                database.mainDao().updateGifticon(data);
                 //dataList.addAll(database.mainDao().getAll());
                 //dataList.set(id,database.mainDao().getAll().get(id));
                 dataList.clear();
