@@ -1,8 +1,7 @@
 package com.example.gifticon_management;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.widget.TextView;
+
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

@@ -1,34 +1,30 @@
 package com.example.gifticon_management;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
+
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.OnConflictStrategy;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-import android.view.WindowManager;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        recyclerView.setAdapter(adapter);
 
         //기프티콘 롱 터치 이벤트
         adapter.setOnItemLongClickListener(new RecyclerviewAdapter.OnItemLongClickListener() {
@@ -121,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.setMessage("삭제 하실겁니까?");
 
                 //다이얼로그 이벤트 처리
+                //삭제 확인버튼
                 builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -129,7 +126,32 @@ public class MainActivity extends AppCompatActivity {
                         adapter.notifyItemRemoved(pos);
                     }
                 });
+                //수정버튼
+                builder.setNeutralButton("수정", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent = new Intent(MainActivity.this, gifticon_update.class);
+                        //수정시 필요한 아이디 넘기기
+                        intent.putExtra("id",pos);
+                        intent.putExtra("name",dataList.get(pos).getText());
+                        intent.putExtra("date",dataList.get(pos).getDate_text());
+                        //날짜 입력
+                        intent.putExtra("year", dataList.get(pos).getYy());
+                        intent.putExtra("month",dataList.get(pos).getMm());
+                        intent.putExtra("day", dataList.get(pos).getDd());
+                        //이미지 입력
+                        Bitmap sendBitmap = dataList.get(pos).getImage();
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        sendBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        byte[] byteArray = stream.toByteArray();intent.putExtra("image_gif",byteArray);
 
+                        startActivity(intent);
+                        adapter.notifyDataSetChanged(); // 새로 추가한 데이터 갱신
+
+                    }
+                });
+
+                //취소버튼
                 builder.setNegativeButton("취소",null);
 
                 //다이얼로그 표시

@@ -27,6 +27,8 @@ public class gifticon_touch_activity extends AppCompatActivity {
     Button gifticon_input_button_touch; //사용
     Button gifticon_cancellation_button_touch; //취소
 
+    Button gifticon_update_button_touch; // 수정버튼
+
     Intent intent;
 
     String name;
@@ -65,6 +67,7 @@ public class gifticon_touch_activity extends AppCompatActivity {
         date_d_day = (TextView) findViewById(R.id.date_d_day);
         gifticon_input_button_touch = (Button) findViewById(R.id.gifticon_input_button_touch);
         gifticon_cancellation_button_touch = (Button) findViewById(R.id.gifticon_cancellation_button_touch);
+        gifticon_update_button_touch = (Button) findViewById(R.id.gifticon_update_button_touch);
 
         //intent값 가져오기
 
@@ -135,6 +138,18 @@ public class gifticon_touch_activity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //기프티콘 수정 버튼 클릭 이벤트
+        gifticon_update_button_touch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //클릭시 수정하는 화면으로 이동해야함.
+
+                //이동시 이미지, 날짜, 이름 데이터 넘겨줘야합니다.
+
+            }
+        });
+
     }
 
     private void updateDisplay(){

@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import static androidx.room.OnConflictStrategy.REPLACE;
 
@@ -21,8 +22,8 @@ public interface MainDao {
     @Delete
     void reset(List<MainData> mainData);
 
-    @Query("UPDATE table_name SET text = :sText WHERE ID = :sID")
-    void update(int sID, String sText);
+    @Update
+    void update(int sID, MainData mainData);
 
     @Query("SELECT * FROM table_name")
     List<MainData> getAll();
