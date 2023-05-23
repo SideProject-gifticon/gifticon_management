@@ -158,7 +158,7 @@ public class gifticon_touch_activity extends AppCompatActivity {
                 intent.putExtra("month",month);
                 intent.putExtra("day", day);
                 //이미지 입력
-                byte[] arr = intent.getByteArrayExtra("image_gif");
+                //byte[] arr = intent.getByteArrayExtra("image_gif");
                 intent.putExtra("image_gif",arr);
 
                 startActivity(intent);
