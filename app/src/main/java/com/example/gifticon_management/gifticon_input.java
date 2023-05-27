@@ -101,11 +101,13 @@ public class gifticon_input extends AppCompatActivity {
                temp.setYy(year);
                temp.setMm(month);
                temp.setDd(day);
+               temp.setIsUsed(false);
                //갤러리 이미지 절대 경로 저장
                try {
                    InputStream in = getContentResolver().openInputStream(uri);
                    Bitmap bitmap = BitmapFactory.decodeStream(in);
-                   temp.setImage(bitmap);
+                   temp.setOriginImage(bitmap);
+                   temp.setUsedImage(bitmap);
                } catch (FileNotFoundException e) {
                    e.printStackTrace();
                }

@@ -1,5 +1,7 @@
 package com.example.gifticon_management;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,6 +13,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -34,13 +37,15 @@ public class gifticon_touch_activity extends AppCompatActivity {
 
     String name;
     String date;
-    Bitmap image;
+    Bitmap originImage;
+    Bitmap usedImage;
 
     //intent로 가져온 변수
     int id;
     int year;
     int month;
     int day;
+    boolean isUsed;
 
     //오늘 날짜 변수
     int yy;
@@ -58,10 +63,16 @@ public class gifticon_touch_activity extends AppCompatActivity {
 
     private int resultNumber=0;
 
+    RoomDB database;
+
+    ActivityResultLauncher<Intent> activityResultLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gifticon_touch);
+
+
 
         imageView_gifticon_touch = (ImageView) findViewById(R.id.imageView_gifticon_touch);
         name_text_touch = (TextView) findViewById(R.id.name_text_touch);
@@ -79,8 +90,11 @@ public class gifticon_touch_activity extends AppCompatActivity {
         name = intent.getStringExtra("name");
         date = intent.getStringExtra("date");
         //image = intent.getParcelableExtra("image_gif");
-        byte[] arr = intent.getByteArrayExtra("image_gif");
-        image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+        byte[] arr1 = intent.getByteArrayExtra("originImage");
+        byte[] arr2 = intent.getByteArrayExtra("usedImage");
+        originImage = BitmapFactory.decodeByteArray(arr1, 0, arr1.length);
+        usedImage = BitmapFactory.decodeByteArray(arr2, 0, arr2.length);
+        isUsed = intent.getBooleanExtra("isUsed", false);
 
 
         year = intent.getIntExtra("year",2022);
@@ -88,7 +102,7 @@ public class gifticon_touch_activity extends AppCompatActivity {
         day = intent.getIntExtra("day", 25);
 
         //데이터 세팅
-        imageView_gifticon_touch.setImageBitmap(image);
+
         name_text_touch.setText(name);
         date_text_touch.setText("만료 날짜 : "+date);
 
@@ -112,25 +126,52 @@ public class gifticon_touch_activity extends AppCompatActivity {
 
        // date_d_day.
 
+        database = RoomDB.getInstance(this);
+        Log.d("ID: ", id+"");
+
+        if(isUsed){
+            gifticon_input_button_touch.setText("사용 취소");
+            imageView_gifticon_touch.setImageBitmap(usedImage);
+        }
+
+        else{
+            gifticon_input_button_touch.setText("사용");
+            imageView_gifticon_touch.setImageBitmap(originImage);
+        }
+
 
         //버튼 셋팅
         //사용 버튼
         gifticon_input_button_touch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //사용완료하면 데이터 저장 따로 해야할듯;
+                isUsed = !isUsed;
 
-                // 이미지 흑백으로 변환
-                ColorMatrix matrix = new ColorMatrix();
-                matrix.setSaturation(0);
-                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-                imageView_gifticon_touch.setColorFilter(filter);
+                MainData data = new MainData();
+                MainData curData = database.mainDao().getDataById(id);
+                if(isUsed){ // 사용
+                    gifticon_input_button_touch.setText("사용 취소");
+                    Bitmap overlayBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.used);
+                    Bitmap usedImg = overlayImg(originImage, overlayBitmap); // 사용 완료 이미지
+                    imageView_gifticon_touch.setImageBitmap(usedImg);
+                    data.setUsedImage(usedImg);
+                }
+                else{ // 사용 취소
+                    gifticon_input_button_touch.setText("사용");
+                    imageView_gifticon_touch.setImageBitmap(originImage);
+                    data.setUsedImage(originImage);
+                }
+                data.setId(id);
+                data.setText(name);
+                data.setDate_text(date);
+                data.setYy(year);
+                data.setMm(month);
+                data.setDd(day);
+                data.setIsUsed(isUsed);
+                data.setOriginImage(originImage);
+                database.mainDao().update(data);
 
-                //Bitmap img2;
-                Bitmap overlayBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.used);
-                //overlayImg(image, overlayBitmap);
-                imageView_gifticon_touch.setImageBitmap(overlayImg(image, overlayBitmap));
-
+                setResult(9001); // 사용 버튼 누르면 resultcode 9001을 메인 액티비티로 보냄
             }
         });
         //취소하면 다시 메인으로 돌아가기
@@ -159,15 +200,28 @@ public class gifticon_touch_activity extends AppCompatActivity {
                 intent.putExtra("day", day);
                 //이미지 입력
                 //byte[] arr = intent.getByteArrayExtra("image_gif");
-                intent.putExtra("image_gif",arr);
+                intent.putExtra("image_gif",arr1);
 
-                startActivity(intent);
+                //startActivity(intent);
+                activityResultLauncher.launch(intent); // gifticon_touch 액티비티 시작
 
 
             }
         });
 
+        activityResultLauncher = registerForActivityResult( // 기프티콘 추가 액티비티에서 확인 버튼 누르면 실행됨
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if(result.getResultCode()==9001){
+                        // TODO
+                        setResult(9001); 
+                        finish();
+
+                    }
+                });
+
     }
+
+
 
     private void updateDisplay(){
 
@@ -191,6 +245,14 @@ public class gifticon_touch_activity extends AppCompatActivity {
         Canvas canvas = new Canvas(combinedBitmap);
         canvas.drawBitmap(resizedOriginalBitmap, 0, 0, null);
         canvas.drawBitmap(resizedOverlayBitmap, 0, 0, null);
+
+        // 흑백으로 변경
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        Paint paint = new Paint();
+        paint.setColorFilter(filter);
+        canvas.drawBitmap(combinedBitmap, 0, 0, paint);
         
         return combinedBitmap;
     }

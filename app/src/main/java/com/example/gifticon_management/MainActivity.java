@@ -90,21 +90,28 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClicked(int position, String data) {
                 //여기에 intent 정보 전달
                 Intent intent = new Intent(MainActivity.this, gifticon_touch_activity.class);
-                intent.putExtra("id",dataList.get(position).getId());
+                intent.putExtra("id", dataList.get(position).getId());
                 intent.putExtra("name",dataList.get(position).getText());
                 intent.putExtra("date",dataList.get(position).getDate_text());
+                intent.putExtra("isUsed", dataList.get(position).getIsUsed());
                 //날짜 입력
                 intent.putExtra("year", dataList.get(position).getYy());
                 intent.putExtra("month",dataList.get(position).getMm());
                 intent.putExtra("day", dataList.get(position).getDd());
                 //이미지 입력
-                Bitmap sendBitmap = dataList.get(position).getImage();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                sendBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-                intent.putExtra("image_gif",byteArray);
+                Bitmap usedImage = dataList.get(position).getUsedImage();
+                Bitmap originImage = dataList.get(position).getOriginImage();
+                ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
+                ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+                originImage.compress(Bitmap.CompressFormat.JPEG, 100, stream1);
+                byte[] byteArray1 = stream1.toByteArray();
+                usedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream2);
+                byte[] byteArray2 = stream2.toByteArray();
+                intent.putExtra("originImage",byteArray1);
+                intent.putExtra("usedImage",byteArray2);
 
-                startActivity(intent);
+                //startActivity(intent);
+                activityResultLauncher.launch(intent); // gifticon_touch 액티비티 시작
             }
         });
 

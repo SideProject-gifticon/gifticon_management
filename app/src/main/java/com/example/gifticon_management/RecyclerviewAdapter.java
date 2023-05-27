@@ -137,7 +137,9 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
         final MainData data = dataList.get(position);
         database = RoomDB.getInstance(context);
         holder.textView.setText(data.getText());
-        holder.imageView.setImageBitmap(data.getImage());
+        if(data.getIsUsed())holder.imageView.setImageBitmap(data.getUsedImage()); // 사용 완료 이미지
+        else holder.imageView.setImageBitmap(data.getOriginImage()); // 원본 이미지
+
     }
 
     @Override

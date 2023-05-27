@@ -136,13 +136,15 @@ public class gifticon_update extends AppCompatActivity {
                     try {
                         InputStream in = getContentResolver().openInputStream(uri);
                         Bitmap bitmap = BitmapFactory.decodeStream(in);
-                        data.setImage(bitmap);
+                        data.setOriginImage(bitmap);
+                        data.setUsedImage(bitmap);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
                 else{
-                    data.setImage(image);
+                    data.setOriginImage(image);
+                    data.setUsedImage(image);
                 }
 
                 //설정된 데이터들을 저장하는데 이떄 해당하는 id 번호에 따라 바꿔주기
