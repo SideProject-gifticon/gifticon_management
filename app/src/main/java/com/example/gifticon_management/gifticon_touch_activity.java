@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -226,6 +227,14 @@ public class gifticon_touch_activity extends AppCompatActivity {
 
                     }
                 });
+        imageView_gifticon_touch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(gifticon_touch_activity.this, ImgTouchActivity.class);
+                intent.putExtra("Image",arr1);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -240,6 +249,8 @@ public class gifticon_touch_activity extends AppCompatActivity {
             date_d_day.setText(String.format("D + %d",absR));
         }
     }
+
+
 
     private Bitmap overlayImg(Bitmap originalBitmap, Bitmap overlayBitmap)
     {
