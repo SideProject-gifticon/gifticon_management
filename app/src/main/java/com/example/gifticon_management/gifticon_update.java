@@ -1,6 +1,8 @@
 package com.example.gifticon_management;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -40,6 +42,8 @@ public class gifticon_update extends AppCompatActivity {
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
 
+    private MainDataViewModel mainDataViewModel;
+
 
     //intent로 가져온 변수
     int id;
@@ -64,7 +68,8 @@ public class gifticon_update extends AppCompatActivity {
 
 
         database = RoomDB.getInstance(this);
-        dataList = database.mainDao().getAll();
+        //dataList = database.mainDao().getAll();
+        mainDataViewModel =  new ViewModelProvider(this).get(MainDataViewModel.class);
 
         imageView_gifticon_update = (ImageView) findViewById(R.id.imageView_gifticon_update);
         name_text_update= (EditText) findViewById(R.id.name_text_update);
@@ -148,14 +153,13 @@ public class gifticon_update extends AppCompatActivity {
                 }
 
                 //설정된 데이터들을 저장하는데 이떄 해당하는 id 번호에 따라 바꿔주기
-                database.mainDao().update(data);
+                //database.mainDao().update(data);
 
                 //dataList.addAll(database.mainDao().getAll());
                 //dataList.set(id,database.mainDao().getAll().get(id));
-                dataList.clear();
-                dataList.addAll(database.mainDao().getAll());
-                //Log.d("list", dataList.get(0).getText());
-                //adapter.notifyDataSetChanged();
+                //dataList.clear();
+                //dataList.addAll(database.mainDao().getAll());
+                mainDataViewModel.update(data);
                 setResult(9001); // 확인 버튼 누르면 resultcode 9001을 메인 액티비티로 보냄
 
                 new Handler().postDelayed(new Runnable() {
@@ -177,6 +181,8 @@ public class gifticon_update extends AppCompatActivity {
 
 
     }
+
+
 
 
     DatePickerDialog.OnDateSetListener mDateSetListener =

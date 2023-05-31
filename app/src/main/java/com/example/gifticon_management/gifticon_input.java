@@ -1,6 +1,8 @@
 package com.example.gifticon_management;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -46,6 +49,8 @@ public class gifticon_input extends AppCompatActivity {
 
 
 
+    private MainDataViewModel mainDataViewModel;
+
     static final int REQUEST_CODE = 1;
     Uri uri;
 
@@ -56,14 +61,24 @@ public class gifticon_input extends AppCompatActivity {
 
 
         database = RoomDB.getInstance(this);
-        dataList = database.mainDao().getAll();
+        //dataList = database.mainDao().getAll();
 
         imageView_gifticon_input = (ImageView) findViewById(R.id.imageView_gifticon_input);
-        name_text_input= (EditText) findViewById(R.id.name_text_input);
+        name_text_input = (EditText) findViewById(R.id.name_text_input);
         date_input_button = (Button) findViewById(R.id.date_input_button);
         date_input_text = (TextView) findViewById(R.id.date_input_text);
         gifticon_input_button = (Button) findViewById(R.id.gifticon_input_button);
         gifticon_cancellation_button = (Button) findViewById(R.id.gifticon_cancellation_button);
+
+        mainDataViewModel = new ViewModelProvider(this).get(MainDataViewModel.class);
+//        mainDataViewModel.getAllMainData().observe(this, new Observer<List<MainData>>() {
+//            @Override
+//            public void onChanged(List<MainData> mainData) {
+//                //변화감지
+//                dataList.clear();
+//                adapter.setMainData(mainData);
+//            }
+//        });
 
         Calendar cal = Calendar.getInstance();
         date_input_text.setText(cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE));
@@ -95,13 +110,18 @@ public class gifticon_input extends AppCompatActivity {
            public void onClick(View view) {
                //입력받은거
                MainData temp = new MainData();
-               temp.setText(name_text_input.getText().toString());
-               //1. 여기서 날짜 저장변수 따로 다시 입력 저장?
-               temp.setDate_text(date);
-               temp.setYy(year);
-               temp.setMm(month);
-               temp.setDd(day);
-               temp.setIsUsed(false);
+               try {
+                   temp.setText(name_text_input.getText().toString());
+                   //1. 여기서 날짜 저장변수 따로 다시 입력 저장?
+                   temp.setDate_text(date);
+                   temp.setYy(year);
+                   temp.setMm(month);
+                   temp.setDd(day);
+                   temp.setIsUsed(false);
+               }catch (NullPointerException e){
+                   Log.d("LOG","값이 없다?"+e);
+               }
+
                //갤러리 이미지 절대 경로 저장
                try {
                    InputStream in = getContentResolver().openInputStream(uri);
@@ -111,8 +131,9 @@ public class gifticon_input extends AppCompatActivity {
                } catch (FileNotFoundException e) {
                    e.printStackTrace();
                }
-               database.mainDao().insert(temp);
-               dataList.addAll(database.mainDao().getAll());
+               //database.mainDao().insert(temp);
+               //dataList.addAll(database.mainDao().getAll());
+               mainDataViewModel.insert(temp);
                //adapter.notifyDataSetChanged();
                setResult(9001); // 확인 버튼 누르면 resultcode 9001을 메인 액티비티로 보냄
 
@@ -136,7 +157,7 @@ public class gifticon_input extends AppCompatActivity {
         });
 
 
-        dataList.addAll(database.mainDao().getAll());
+        //dataList.addAll(database.mainDao().getAll());
 
     }
 

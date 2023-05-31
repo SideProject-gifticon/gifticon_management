@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
 
+    private MainDataViewModel mainDataViewModel;
+
     ActivityResultLauncher<Intent> activityResultLauncher; // 기프티콘 추가 액티비티 실행할 때 필요
 
 
@@ -52,6 +56,33 @@ public class MainActivity extends AppCompatActivity {
         // 네비게이션 뷰
         navigationView = findViewById(R.id.navigationView);
         drawerLayout = findViewById(R.id.layout_drawer);
+        // 누르면 Drawer 열리는 삼선 모양 버튼
+        barDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        barDrawerToggle.syncState();
+        drawerLayout.addDrawerListener(barDrawerToggle);
+
+
+        database = RoomDB.getInstance(this);
+        //dataList = database.mainDao().getAll();
+
+        recyclerView = findViewById(R.id.recyclerView);
+        gifticon_add_button = (FloatingActionButton) findViewById(R.id.gifticon_add_button);
+        int numColumns = 3;
+        recyclerView.setLayoutManager(new GridLayoutManager(this, numColumns));
+
+        adapter = new RecyclerviewAdapter();
+        recyclerView.setAdapter(adapter);
+
+        mainDataViewModel = new ViewModelProvider(this).get(MainDataViewModel.class);
+        mainDataViewModel.getAllMainData().observe(this, new Observer<List<MainData>>() {
+            @Override
+            public void onChanged(List<MainData> mainData) {
+                //변화감지
+                dataList.clear();
+                adapter.setMainData(mainData);
+            }
+        });
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -67,40 +98,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 누르면 Drawer 열리는 삼선 모양 버튼
-        barDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        barDrawerToggle.syncState();
-        drawerLayout.addDrawerListener(barDrawerToggle);
 
-
-        database = RoomDB.getInstance(this);
-        dataList = database.mainDao().getAll();
-
-        recyclerView = findViewById(R.id.recyclerView);
-        gifticon_add_button = (FloatingActionButton) findViewById(R.id.gifticon_add_button);
-        int numColumns = 3;
-        recyclerView.setLayoutManager(new GridLayoutManager(this, numColumns));
-
-        adapter = new RecyclerviewAdapter(MainActivity.this, dataList);
 
         // 기프티콘 터치
+
         adapter.setOnItemClickListener(new RecyclerviewAdapter.OnItemClickListener() {
             @Override
-            public void onItemClicked(int position, String data) {
+            public void onItemClicked(int position, MainData mainData) {
+                //list가 아니라 클릭한 데이터에서 get데이터값을 전달해줘야한다.
                 //여기에 intent 정보 전달
                 Intent intent = new Intent(MainActivity.this, gifticon_touch_activity.class);
-                intent.putExtra("id", dataList.get(position).getId());
-                intent.putExtra("name",dataList.get(position).getText());
-                intent.putExtra("date",dataList.get(position).getDate_text());
-                intent.putExtra("isUsed", dataList.get(position).getIsUsed());
-                //날짜 입력
-                intent.putExtra("year", dataList.get(position).getYy());
-                intent.putExtra("month",dataList.get(position).getMm());
-                intent.putExtra("day", dataList.get(position).getDd());
+                intent.putExtra("id",mainData.getId());
+                intent.putExtra("name",mainData.getText());
+                intent.putExtra("date",mainData.getDate_text());
+                intent.putExtra("isUsed",mainData.getIsUsed());
+                //날짜입력
+                intent.putExtra("year",mainData.getYy());
+                intent.putExtra("month",mainData.getMm());
+                intent.putExtra("day",mainData.getDd());
                 //이미지 입력
-                Bitmap usedImage = dataList.get(position).getUsedImage();
-                Bitmap originImage = dataList.get(position).getOriginImage();
+                Bitmap usedImage = mainData.getUsedImage();
+                Bitmap originImage = mainData.getOriginImage();
                 ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
                 ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
                 originImage.compress(Bitmap.CompressFormat.JPEG, 100, stream1);
@@ -131,7 +149,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //확인 누르면 삭제
-                        database.mainDao().delete(dataList.remove(pos));
+                        //database.mainDao().delete(dataList.remove(pos));
+                        mainDataViewModel.delete(adapter.getMainDataAt(pos));
                         adapter.notifyItemRemoved(pos);
                     }
                 });
@@ -161,39 +180,17 @@ public class MainActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if(result.getResultCode()==9001){
                         dataList.clear();
-                        dataList.addAll(database.mainDao().getAll());
+                        adapter.setMainData(dataList);
+
                         adapter.notifyDataSetChanged(); // 새로 추가한 데이터 갱신
                     }
                 });
 
 
 
-        // 데이터 모두 삭제
-
-//        database.mainDao().reset(dataList);
-//        dataList.clear();
-//        dataList.addAll(database.mainDao().getAll());
-//        adapter.notifyDataSetChanged();
-
-
-
-        //데이터 임시 추가
-
-//        for(int i=0; i<3; i++){
-//            MainData temp = new MainData();
-//            temp.setText("스타벅스"+i);
-//            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample3);
-//            temp.setImage(bitmap);
-//            database.mainDao().insert(temp);
-//
-//            dataList.clear();
-//            dataList.addAll(database.mainDao().getAll());
-//            adapter.notifyDataSetChanged();
-//        }
-
-
 
     }
+
 
     @Override // 네비게이션 뷰의 메뉴를 터치했을 때 실행
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

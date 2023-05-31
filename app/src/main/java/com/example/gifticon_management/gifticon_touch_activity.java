@@ -3,6 +3,7 @@ package com.example.gifticon_management;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -61,6 +62,8 @@ public class gifticon_touch_activity extends AppCompatActivity {
     private  long t;
     private  long r;
 
+    private MainDataViewModel mainDataViewModel;
+
     private int resultNumber=0;
 
     RoomDB database;
@@ -81,6 +84,8 @@ public class gifticon_touch_activity extends AppCompatActivity {
         gifticon_input_button_touch = (Button) findViewById(R.id.gifticon_input_button_touch);
         gifticon_cancellation_button_touch = (Button) findViewById(R.id.gifticon_cancellation_button_touch);
         gifticon_update_button_touch = (Button) findViewById(R.id.gifticon_update_button_touch);
+
+        mainDataViewModel =  new ViewModelProvider(this).get(MainDataViewModel.class);
 
         //intent값 가져오기
 
@@ -169,7 +174,10 @@ public class gifticon_touch_activity extends AppCompatActivity {
                 data.setDd(day);
                 data.setIsUsed(isUsed);
                 data.setOriginImage(originImage);
-                database.mainDao().update(data);
+                //업데이트
+                mainDataViewModel.update(data);
+                //database.mainDao().update(data);
+
 
                 setResult(9001); // 사용 버튼 누르면 resultcode 9001을 메인 액티비티로 보냄
             }

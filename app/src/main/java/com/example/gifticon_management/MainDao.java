@@ -1,5 +1,6 @@
 package com.example.gifticon_management;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -27,7 +28,8 @@ public interface MainDao {
 
 
     @Query("SELECT * FROM table_name")
-    List<MainData> getAll();
+    //List<MainData> getAll();
+    LiveData<List<MainData>> getAll();
 
     @Query("SELECT * FROM table_name WHERE id = :id")
     MainData getDataById(int id);

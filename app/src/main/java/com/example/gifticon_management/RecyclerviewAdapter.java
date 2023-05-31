@@ -30,25 +30,21 @@ import java.util.List;
 
 public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapter.ViewHolder> {
 
-    //private ArrayList<String> mData = null;
 
-    private List<MainData> dataList;
+
+    private List<MainData> dataList = new ArrayList<>();
     private Activity context;
     private RoomDB database;
 
-    public RecyclerviewAdapter(Activity context, List<MainData> dataList){
-        this.context=context;
-        this.dataList=dataList;
-        notifyDataSetChanged();
-    }
 
-    RecyclerviewAdapter(List<MainData> list){
-        dataList = list;
+    public MainData getMainDataAt(int position){
+        return dataList.get(position);
     }
 
     // 터치 이벤트
+    //아이템 클릭시 해당 아이템 위치와 데이터값을 넘겨야한다.
     public interface OnItemClickListener{
-        void onItemClicked(int position, String data);
+        void onItemClicked(int position, MainData mainData);
 
     }
 
@@ -90,18 +86,11 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String data="";
                 int pos = vh.getAdapterPosition();
+                MainData mainData = dataList.get(pos);
                 if(pos != RecyclerView.NO_POSITION){
-                    data = vh.getTextView().getText().toString();
-//                    Intent intent = new Intent(view.getContext(), gifticon_touch_activity.class);
-//                    intent.putExtra("name",dataList.get(pos).getText());
-//                    intent.putExtra("date",dataList.get(pos).getDate_text());
-//                    intent.putExtra("image_gif",dataList.get(pos).getImage());
-//                    view.getContext().startActivity(intent);
-                    itemClickListener.onItemClicked(pos,data);
+                    itemClickListener.onItemClicked(pos,mainData);
                 }
-                //itemClickListener.onItemClicked(pos,data);
             }
         });
 
@@ -147,6 +136,11 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
         return dataList.size();
     }
 
+    public void setMainData(List<MainData> dataList){
+        this.dataList = dataList;
+        notifyDataSetChanged();
+    }
+
 
     // 뷰홀더
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -157,7 +151,9 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
             super(itemView);
             imageView = itemView.findViewById(R.id.gifticon_image);
             textView = itemView.findViewById((R.id.gifticon_name));
+
         }
+
 
         public TextView getTextView(){
             return textView;
