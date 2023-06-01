@@ -13,7 +13,7 @@ import com.github.chrisbanes.photoview.PhotoView;
 
 public class ImgTouchActivity extends AppCompatActivity {
     PhotoView photoView;
-
+    RoomDB database;
     Intent intent;
     Bitmap image;
     @Override
@@ -21,9 +21,10 @@ public class ImgTouchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_img_touch);
         intent = getIntent();
+        database = RoomDB.getInstance(this);
 
-        byte[] imageArr = intent.getByteArrayExtra("Image");
-        image = BitmapFactory.decodeByteArray(imageArr, 0, imageArr.length);
+        int id = intent.getIntExtra("id", 0);
+        image = database.mainDao().getDataById(id).getOriginImage();
 
         photoView = findViewById(R.id.gifticonPhotoView);
         photoView.setImageBitmap(image);

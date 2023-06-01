@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -118,16 +119,16 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("month",mainData.getMm());
                 intent.putExtra("day",mainData.getDd());
                 //이미지 입력
-                Bitmap usedImage = mainData.getUsedImage();
-                Bitmap originImage = mainData.getOriginImage();
-                ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
-                ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
-                originImage.compress(Bitmap.CompressFormat.JPEG, 100, stream1);
-                byte[] byteArray1 = stream1.toByteArray();
-                usedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream2);
-                byte[] byteArray2 = stream2.toByteArray();
-                intent.putExtra("originImage",byteArray1);
-                intent.putExtra("usedImage",byteArray2);
+                //Bitmap usedImage = mainData.getUsedImage();
+                //Bitmap originImage = mainData.getOriginImage();
+                //ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
+                //ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+                //originImage.compress(Bitmap.CompressFormat.JPEG, 100, stream1);
+                //byte[] byteArray1 = stream1.toByteArray();
+                //usedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream2);
+                //byte[] byteArray2 = stream2.toByteArray();
+                //intent.putExtra("originImage",byteArray1);
+                //intent.putExtra("usedImage",byteArray2);
 
                 //startActivity(intent);
                 activityResultLauncher.launch(intent); // gifticon_touch 액티비티 시작

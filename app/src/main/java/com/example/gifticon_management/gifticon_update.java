@@ -90,8 +90,8 @@ public class gifticon_update extends AppCompatActivity {
         name = intentUpdate.getStringExtra("name");
         date = intentUpdate.getStringExtra("date");
         //image = intent.getParcelableExtra("image_gif");
-        byte[] arr = intentUpdate.getByteArrayExtra("image_gif");
-        image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+        //byte[] arr = intentUpdate.getByteArrayExtra("image_gif");
+        image = database.mainDao().getDataById(id).getOriginImage();
 
 
         year = intentUpdate.getIntExtra("year",2022);

@@ -80,8 +80,6 @@ public class gifticon_touch_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gifticon_touch);
 
-
-
         imageView_gifticon_touch = (ImageView) findViewById(R.id.imageView_gifticon_touch);
         name_text_touch = (TextView) findViewById(R.id.name_text_touch);
         date_text_touch = (TextView) findViewById(R.id.date_text_touch);
@@ -100,12 +98,11 @@ public class gifticon_touch_activity extends AppCompatActivity {
         name = intent.getStringExtra("name");
         date = intent.getStringExtra("date");
         //image = intent.getParcelableExtra("image_gif");
-        byte[] arr1 = intent.getByteArrayExtra("originImage");
-        byte[] arr2 = intent.getByteArrayExtra("usedImage");
-        originImage = BitmapFactory.decodeByteArray(arr1, 0, arr1.length);
-        usedImage = BitmapFactory.decodeByteArray(arr2, 0, arr2.length);
+        //byte[] arr1 = intent.getByteArrayExtra("originImage");
+        //byte[] arr2 = intent.getByteArrayExtra("usedImage");
+        //originImage = BitmapFactory.decodeByteArray(arr1, 0, arr1.length);
+        //usedImage = BitmapFactory.decodeByteArray(arr2, 0, arr2.length);
         isUsed = intent.getBooleanExtra("isUsed", false);
-
 
         year = intent.getIntExtra("year",2022);
         month = intent.getIntExtra("month",5);
@@ -134,16 +131,13 @@ public class gifticon_touch_activity extends AppCompatActivity {
         resultNumber = (int)r;
         updateDisplay();
 
-       // date_d_day.
-
         database = RoomDB.getInstance(this);
-        Log.d("ID: ", id+"");
-
+        usedImage = database.mainDao().getDataById(id).getUsedImage();
+        originImage = database.mainDao().getDataById(id).getOriginImage();
         if(isUsed){
             gifticon_input_button_touch.setText("사용 취소");
             imageView_gifticon_touch.setImageBitmap(usedImage);
         }
-
         else{
             gifticon_input_button_touch.setText("사용");
             imageView_gifticon_touch.setImageBitmap(originImage);
@@ -158,7 +152,7 @@ public class gifticon_touch_activity extends AppCompatActivity {
                 isUsed = !isUsed;
 
                 MainData data = new MainData();
-                MainData curData = database.mainDao().getDataById(id);
+                //MainData curData = database.mainDao().getDataById(id);
                 if(isUsed){ // 사용
                     gifticon_input_button_touch.setText("사용 취소");
                     Bitmap overlayBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.used);
@@ -212,8 +206,8 @@ public class gifticon_touch_activity extends AppCompatActivity {
                 intent.putExtra("month",month);
                 intent.putExtra("day", day);
                 //이미지 입력
-                //byte[] arr = intent.getByteArrayExtra("image_gif");
-                intent.putExtra("image_gif",arr1);
+               // byte[] arr = intent.getByteArrayExtra("image_gif");
+                //intent.putExtra("image_gif",arr);
 
                 //startActivity(intent);
                 activityResultLauncher.launch(intent); // gifticon_touch 액티비티 시작
@@ -235,7 +229,10 @@ public class gifticon_touch_activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(gifticon_touch_activity.this, ImgTouchActivity.class);
-                intent.putExtra("Image",arr1);
+                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                //originImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                //byte[] arr = stream.toByteArray();
+                intent.putExtra("id",id);
 
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(gifticon_touch_activity.this, view, "imgClickTrans");
                 startActivity(intent, options.toBundle());
@@ -260,10 +257,12 @@ public class gifticon_touch_activity extends AppCompatActivity {
 
     private Bitmap overlayImg(Bitmap originalBitmap, Bitmap usedBitmap)
     {
+
+
         int imageViewWidth = imageView_gifticon_touch.getWidth();
         int imageViewHeight = imageView_gifticon_touch.getHeight();
 
-        float scaleFactor = Math.min((float)imageViewWidth / usedImage.getWidth(), (float) imageViewHeight / usedImage.getHeight());
+        float scaleFactor = Math.min((float)imageViewWidth / usedBitmap.getWidth(), (float) imageViewHeight / usedBitmap.getHeight());
         int resizedUsedWidth = Math.round(usedBitmap.getWidth() * scaleFactor);
         int resizedUsedHeight = Math.round(usedBitmap.getHeight() * scaleFactor);
 
@@ -303,7 +302,8 @@ public class gifticon_touch_activity extends AppCompatActivity {
         paint.setColorFilter(filter);
         canvas.drawBitmap(combinedBitmap, 0, 0, paint);
 
-
         return combinedBitmap;
     }
+
+
 }
