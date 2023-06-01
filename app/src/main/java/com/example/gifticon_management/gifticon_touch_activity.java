@@ -10,9 +10,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -256,18 +258,42 @@ public class gifticon_touch_activity extends AppCompatActivity {
 
 
 
-    private Bitmap overlayImg(Bitmap originalBitmap, Bitmap overlayBitmap)
+    private Bitmap overlayImg(Bitmap originalBitmap, Bitmap usedBitmap)
     {
-        int width = Math.min(originalBitmap.getWidth(), overlayBitmap.getWidth());
-        int height = Math.min(originalBitmap.getHeight(), overlayBitmap.getHeight());
+        int imageViewWidth = imageView_gifticon_touch.getWidth();
+        int imageViewHeight = imageView_gifticon_touch.getHeight();
 
-        Bitmap resizedOriginalBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
-        Bitmap resizedOverlayBitmap = Bitmap.createScaledBitmap(overlayBitmap, width, height, false);
+        float scaleFactor = Math.min((float)imageViewWidth / usedImage.getWidth(), (float) imageViewHeight / usedImage.getHeight());
+        int resizedUsedWidth = Math.round(usedBitmap.getWidth() * scaleFactor);
+        int resizedUsedHeight = Math.round(usedBitmap.getHeight() * scaleFactor);
 
-        Bitmap combinedBitmap = Bitmap.createBitmap(width, height, resizedOriginalBitmap.getConfig());
+        int gifticonWidth = originalBitmap.getWidth();
+        int gifticonHeight = originalBitmap.getHeight();
+
+        int resizedGifticonWidth, resizedGifticonHeight;
+        if (gifticonWidth > gifticonHeight) {
+            // 기프티콘 이미지의 가로가 더 긴 경우
+            resizedGifticonWidth = resizedUsedWidth;
+            resizedGifticonHeight = (int) (((float) resizedUsedWidth / gifticonWidth) * gifticonHeight);
+        } else {
+            // 기프티콘 이미지의 세로가 더 긴 경우
+            resizedGifticonHeight = resizedUsedHeight;
+            resizedGifticonWidth = (int) (((float) resizedUsedHeight / gifticonHeight) * gifticonWidth);
+        }
+
+        Bitmap resizedOriginalBitmap = Bitmap.createScaledBitmap(originalBitmap, resizedGifticonWidth, resizedGifticonHeight, false);
+        Bitmap resizeUsedBitmap = Bitmap.createScaledBitmap(usedBitmap, resizedUsedWidth, resizedUsedHeight, false);
+
+        Bitmap combinedBitmap = Bitmap.createBitmap(resizedUsedWidth, resizedUsedHeight, resizedOriginalBitmap.getConfig());
         Canvas canvas = new Canvas(combinedBitmap);
-        canvas.drawBitmap(resizedOriginalBitmap, 0, 0, null);
-        canvas.drawBitmap(resizedOverlayBitmap, 0, 0, null);
+
+        canvas.drawColor(Color.WHITE); // 배경을 흰색으로 설정
+
+        int left = (resizedUsedWidth - resizedOriginalBitmap.getWidth()) / 2; // 가운데 정렬을 위해 left 좌표 계산
+        int top = (resizedUsedHeight - resizedOriginalBitmap.getHeight()) / 2; // 가운데 정렬을 위해 top 좌표 계산
+
+        canvas.drawBitmap(resizedOriginalBitmap, left, top, null);
+        canvas.drawBitmap(resizeUsedBitmap, 0, 0, null);
 
         // 흑백으로 변경
         ColorMatrix matrix = new ColorMatrix();
@@ -276,7 +302,8 @@ public class gifticon_touch_activity extends AppCompatActivity {
         Paint paint = new Paint();
         paint.setColorFilter(filter);
         canvas.drawBitmap(combinedBitmap, 0, 0, paint);
-        
+
+
         return combinedBitmap;
     }
 }
