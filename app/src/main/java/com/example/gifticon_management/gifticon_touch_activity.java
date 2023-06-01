@@ -17,6 +17,8 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -232,7 +234,9 @@ public class gifticon_touch_activity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(gifticon_touch_activity.this, ImgTouchActivity.class);
                 intent.putExtra("Image",arr1);
-                startActivity(intent);
+
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(gifticon_touch_activity.this, view, "imgClickTrans");
+                startActivity(intent, options.toBundle());
             }
         });
 

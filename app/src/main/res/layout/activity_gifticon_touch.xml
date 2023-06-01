@@ -28,6 +28,7 @@
             android:background="@drawable/round"
             android:onClick="mOnclick"
             android:src="@drawable/ic_launcher_background"
+            android:transitionName="imgClickTrans"
             tools:ignore="OnClick,SpeakableTextPresentCheck" />
     </androidx.cardview.widget.CardView>
 
