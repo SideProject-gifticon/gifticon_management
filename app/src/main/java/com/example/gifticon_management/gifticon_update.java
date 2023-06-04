@@ -1,6 +1,5 @@
 package com.example.gifticon_management;
 
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -12,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -22,6 +20,7 @@ import android.widget.TextView;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -98,6 +97,7 @@ public class gifticon_update extends AppCompatActivity {
         month = intentUpdate.getIntExtra("month",5);
         day = intentUpdate.getIntExtra("day", 25);
 
+
         //데이터 세팅
         imageView_gifticon_update.setImageBitmap(image);
         name_text_update.setText(name);
@@ -119,7 +119,8 @@ public class gifticon_update extends AppCompatActivity {
         date_update_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mOnClick_DatePick(view);
+                //달력 나올경우 현재 만료날짜 기준으로 보여주기
+                mOnClick_DatePick(view,year,month,day);
 
             }
         });
@@ -182,8 +183,7 @@ public class gifticon_update extends AppCompatActivity {
 
     }
 
-
-
+    
 
     DatePickerDialog.OnDateSetListener mDateSetListener =
             new DatePickerDialog.OnDateSetListener() {
@@ -201,10 +201,8 @@ public class gifticon_update extends AppCompatActivity {
 
                 }};
 
-
-    public void mOnClick_DatePick(View v){
-        Calendar cal = Calendar.getInstance();
-        new DatePickerDialog(this, mDateSetListener, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE)).show();
+    private void mOnClick_DatePick(View view, int year, int month, int day) {
+        new DatePickerDialog(this, mDateSetListener, year, month, day).show();
     }
 
 

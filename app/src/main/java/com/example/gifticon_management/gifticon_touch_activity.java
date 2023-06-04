@@ -3,6 +3,7 @@ package com.example.gifticon_management;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,7 +32,7 @@ public class gifticon_touch_activity extends AppCompatActivity {
     TextView date_text_touch;
     TextView date_d_day;
     Button gifticon_input_button_touch; //사용
-    Button gifticon_cancellation_button_touch; //취소
+
 
     Button gifticon_update_button_touch; // 수정버튼
 
@@ -68,6 +70,8 @@ public class gifticon_touch_activity extends AppCompatActivity {
 
     RoomDB database;
 
+    Toolbar toolbar;
+
     ActivityResultLauncher<Intent> activityResultLauncher;
 
     @Override
@@ -82,15 +86,20 @@ public class gifticon_touch_activity extends AppCompatActivity {
         date_text_touch = (TextView) findViewById(R.id.date_text_touch);
         date_d_day = (TextView) findViewById(R.id.date_d_day);
         gifticon_input_button_touch = (Button) findViewById(R.id.gifticon_input_button_touch);
-        gifticon_cancellation_button_touch = (Button) findViewById(R.id.gifticon_cancellation_button_touch);
         gifticon_update_button_touch = (Button) findViewById(R.id.gifticon_update_button_touch);
+
+        toolbar = findViewById(R.id.toolbar);
 
         mainDataViewModel =  new ViewModelProvider(this).get(MainDataViewModel.class);
 
+
+
+        setSupportActionBar(toolbar);
+        //뒤로가기 활성화
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //intent값 가져오기
-
         intent = getIntent();
-
         id = intent.getIntExtra("id",1);
         name = intent.getStringExtra("name");
         date = intent.getStringExtra("date");
@@ -182,14 +191,6 @@ public class gifticon_touch_activity extends AppCompatActivity {
                 setResult(9001); // 사용 버튼 누르면 resultcode 9001을 메인 액티비티로 보냄
             }
         });
-        //취소하면 다시 메인으로 돌아가기
-        gifticon_cancellation_button_touch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //취소
-                finish();
-            }
-        });
 
         //기프티콘 수정 버튼 클릭 이벤트
         gifticon_update_button_touch.setOnClickListener(new View.OnClickListener() {
@@ -263,5 +264,17 @@ public class gifticon_touch_activity extends AppCompatActivity {
         canvas.drawBitmap(combinedBitmap, 0, 0, paint);
         
         return combinedBitmap;
+    }
+
+    //뒤로가기 토글 버튼 작동
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:{
+                finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
