@@ -18,10 +18,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
 
+    Toolbar toolbar;
+
     private MainDataViewModel mainDataViewModel;
 
     ActivityResultLauncher<Intent> activityResultLauncher; // 기프티콘 추가 액티비티 실행할 때 필요
@@ -56,13 +59,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // 네비게이션 뷰
+        toolbar = (Toolbar) findViewById(R.id.toolbar_drawer);
         navigationView = findViewById(R.id.navigationView);
-        drawerLayout = findViewById(R.id.layout_drawer);
+        //drawerLayout = findViewById(R.id.layout_drawer);
         // 누르면 Drawer 열리는 삼선 모양 버튼
-        barDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        barDrawerToggle.syncState();
-        drawerLayout.addDrawerListener(barDrawerToggle);
+        //barDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name);
+        setSupportActionBar(toolbar);
+
+        //drawerLayout.addDrawerListener(barDrawerToggle);
+        //barDrawerToggle.syncState();
 
 
         database = RoomDB.getInstance(this);
@@ -85,20 +90,20 @@ public class MainActivity extends AppCompatActivity {
                 adapter.setMainData(mainData);
             }
         });
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch(item.getItemId()){
-                    case R.id.menu_setting: // 설정 눌렀을 때
-                        Intent intent = new Intent(MainActivity.this, settingActivity.class);
-                        startActivity(intent); // 설정 창 실행
-                        break;
-                }
-                // Drawer 닫기
-                drawerLayout.closeDrawer(navigationView);
-                return false;
-            }
-        });
+//        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                switch(item.getItemId()){
+//                    case R.id.menu_setting: // 설정 눌렀을 때
+//                        Intent intent = new Intent(MainActivity.this, settingActivity.class);
+//                        startActivity(intent); // 설정 창 실행
+//                        break;
+//                }
+//                // Drawer 닫기
+//                drawerLayout.closeDrawer(navigationView);
+//                return false;
+//            }
+//        });
 
 
 
@@ -194,9 +199,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.drawer_menu, menu);
+        return true;
+    }
+
     @Override // 네비게이션 뷰의 메뉴를 터치했을 때 실행
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        barDrawerToggle.onOptionsItemSelected(item);
+        switch (item.getItemId()){
+            case R.id.menu_setting:
+                Intent intent = new Intent(MainActivity.this, settingActivity.class);
+                startActivity(intent); // 설정 창 실행
+                break;
+        }
+        //barDrawerToggle.onOptionsItemSelected(item);
         return super.onOptionsItemSelected(item);
+
     }
 }
