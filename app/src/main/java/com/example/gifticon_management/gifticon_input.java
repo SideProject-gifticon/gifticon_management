@@ -71,14 +71,6 @@ public class gifticon_input extends AppCompatActivity {
         gifticon_cancellation_button = (Button) findViewById(R.id.gifticon_cancellation_button);
 
         mainDataViewModel = new ViewModelProvider(this).get(MainDataViewModel.class);
-//        mainDataViewModel.getAllMainData().observe(this, new Observer<List<MainData>>() {
-//            @Override
-//            public void onChanged(List<MainData> mainData) {
-//                //변화감지
-//                dataList.clear();
-//                adapter.setMainData(mainData);
-//            }
-//        });
 
         Calendar cal = Calendar.getInstance();
         date_input_text.setText(cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.get(Calendar.DATE));

@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.layout_drawer);
         // 누르면 Drawer 열리는 삼선 모양 버튼
         barDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         barDrawerToggle.syncState();
         drawerLayout.addDrawerListener(barDrawerToggle);
 
