@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -118,6 +119,7 @@ public class gifticon_input extends AppCompatActivity {
                try {
                    InputStream in = getContentResolver().openInputStream(uri);
                    Bitmap bitmap = BitmapFactory.decodeStream(in);
+                   bitmap = imageOptimize(bitmap);
                    temp.setOriginImage(bitmap);
                    temp.setUsedImage(bitmap);
                } catch (FileNotFoundException e) {
@@ -138,6 +140,8 @@ public class gifticon_input extends AppCompatActivity {
 
            }
        });
+
+
 
 
         //취소 버튼을 눌렀을경우
@@ -205,6 +209,34 @@ public class gifticon_input extends AppCompatActivity {
         }
     }
 
+    public Bitmap imageOptimize(Bitmap bitmap){
+        // 이미지 용량 확인
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+        int currentSizeKB = outStream.toByteArray().length / 1024;
 
+        if (currentSizeKB > 1024) { // 1MB 이상인 경우에만 처리
+            int maxWidth = 500; // 최대 너비
+            int maxHeight = 500; // 최대 높이
+            Bitmap resizedBitmap = bitmap;
+
+            int width = resizedBitmap.getWidth();
+            int height = resizedBitmap.getHeight();
+            float scaleFactor = Math.min((float) maxWidth / width, (float) maxHeight / height);
+            int targetWidth = Math.round(width * scaleFactor);
+            int targetHeight = Math.round(height * scaleFactor);
+            resizedBitmap = Bitmap.createScaledBitmap(resizedBitmap, targetWidth, targetHeight, true);
+
+            while (currentSizeKB > 1024) { // 이미지 용량이 1MB 이하가 될 때까지 줄임
+                outStream.reset();
+                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outStream);
+                currentSizeKB = outStream.toByteArray().length / 1024;
+            }
+
+            return resizedBitmap;
+        } else {
+            return bitmap;
+        }
+    }
 
 }

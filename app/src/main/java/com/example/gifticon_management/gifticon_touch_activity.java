@@ -6,18 +6,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -79,8 +84,6 @@ public class gifticon_touch_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gifticon_touch);
 
-
-
         imageView_gifticon_touch = (ImageView) findViewById(R.id.imageView_gifticon_touch);
         name_text_touch = (TextView) findViewById(R.id.name_text_touch);
         date_text_touch = (TextView) findViewById(R.id.date_text_touch);
@@ -104,12 +107,11 @@ public class gifticon_touch_activity extends AppCompatActivity {
         name = intent.getStringExtra("name");
         date = intent.getStringExtra("date");
         //image = intent.getParcelableExtra("image_gif");
-        byte[] arr1 = intent.getByteArrayExtra("originImage");
-        byte[] arr2 = intent.getByteArrayExtra("usedImage");
-        originImage = BitmapFactory.decodeByteArray(arr1, 0, arr1.length);
-        usedImage = BitmapFactory.decodeByteArray(arr2, 0, arr2.length);
+        //byte[] arr1 = intent.getByteArrayExtra("originImage");
+        //byte[] arr2 = intent.getByteArrayExtra("usedImage");
+        //originImage = BitmapFactory.decodeByteArray(arr1, 0, arr1.length);
+        //usedImage = BitmapFactory.decodeByteArray(arr2, 0, arr2.length);
         isUsed = intent.getBooleanExtra("isUsed", false);
-
 
         year = intent.getIntExtra("year",2022);
         month = intent.getIntExtra("month",5);
@@ -138,16 +140,13 @@ public class gifticon_touch_activity extends AppCompatActivity {
         resultNumber = (int)r;
         updateDisplay();
 
-       // date_d_day.
-
         database = RoomDB.getInstance(this);
-        Log.d("ID: ", id+"");
-
+        usedImage = database.mainDao().getDataById(id).getUsedImage();
+        originImage = database.mainDao().getDataById(id).getOriginImage();
         if(isUsed){
             gifticon_input_button_touch.setText("사용 취소");
             imageView_gifticon_touch.setImageBitmap(usedImage);
         }
-
         else{
             gifticon_input_button_touch.setText("사용");
             imageView_gifticon_touch.setImageBitmap(originImage);
@@ -162,7 +161,7 @@ public class gifticon_touch_activity extends AppCompatActivity {
                 isUsed = !isUsed;
 
                 MainData data = new MainData();
-                MainData curData = database.mainDao().getDataById(id);
+                //MainData curData = database.mainDao().getDataById(id);
                 if(isUsed){ // 사용
                     gifticon_input_button_touch.setText("사용 취소");
                     Bitmap overlayBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.used);
@@ -208,8 +207,8 @@ public class gifticon_touch_activity extends AppCompatActivity {
                 intent.putExtra("month",month);
                 intent.putExtra("day", day);
                 //이미지 입력
-                //byte[] arr = intent.getByteArrayExtra("image_gif");
-                intent.putExtra("image_gif",arr1);
+               // byte[] arr = intent.getByteArrayExtra("image_gif");
+                //intent.putExtra("image_gif",arr);
 
                 //startActivity(intent);
                 activityResultLauncher.launch(intent); // gifticon_touch 액티비티 시작
@@ -227,6 +226,19 @@ public class gifticon_touch_activity extends AppCompatActivity {
 
                     }
                 });
+        imageView_gifticon_touch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(gifticon_touch_activity.this, ImgTouchActivity.class);
+                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                //originImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                //byte[] arr = stream.toByteArray();
+                intent.putExtra("id",id);
+
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(gifticon_touch_activity.this, view, "imgClickTrans");
+                startActivity(intent, options.toBundle());
+            }
+        });
 
     }
 
@@ -242,18 +254,46 @@ public class gifticon_touch_activity extends AppCompatActivity {
         }
     }
 
-    private Bitmap overlayImg(Bitmap originalBitmap, Bitmap overlayBitmap)
+
+
+    private Bitmap overlayImg(Bitmap originalBitmap, Bitmap usedBitmap)
     {
-        int width = Math.min(originalBitmap.getWidth(), overlayBitmap.getWidth());
-        int height = Math.min(originalBitmap.getHeight(), overlayBitmap.getHeight());
 
-        Bitmap resizedOriginalBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
-        Bitmap resizedOverlayBitmap = Bitmap.createScaledBitmap(overlayBitmap, width, height, false);
 
-        Bitmap combinedBitmap = Bitmap.createBitmap(width, height, resizedOriginalBitmap.getConfig());
+        int imageViewWidth = imageView_gifticon_touch.getWidth();
+        int imageViewHeight = imageView_gifticon_touch.getHeight();
+
+        float scaleFactor = Math.min((float)imageViewWidth / usedBitmap.getWidth(), (float) imageViewHeight / usedBitmap.getHeight());
+        int resizedUsedWidth = Math.round(usedBitmap.getWidth() * scaleFactor);
+        int resizedUsedHeight = Math.round(usedBitmap.getHeight() * scaleFactor);
+
+        int gifticonWidth = originalBitmap.getWidth();
+        int gifticonHeight = originalBitmap.getHeight();
+
+        int resizedGifticonWidth, resizedGifticonHeight;
+        if (gifticonWidth > gifticonHeight) {
+            // 기프티콘 이미지의 가로가 더 긴 경우
+            resizedGifticonWidth = resizedUsedWidth;
+            resizedGifticonHeight = (int) (((float) resizedUsedWidth / gifticonWidth) * gifticonHeight);
+        } else {
+            // 기프티콘 이미지의 세로가 더 긴 경우
+            resizedGifticonHeight = resizedUsedHeight;
+            resizedGifticonWidth = (int) (((float) resizedUsedHeight / gifticonHeight) * gifticonWidth);
+        }
+
+        Bitmap resizedOriginalBitmap = Bitmap.createScaledBitmap(originalBitmap, resizedGifticonWidth, resizedGifticonHeight, false);
+        Bitmap resizeUsedBitmap = Bitmap.createScaledBitmap(usedBitmap, resizedUsedWidth, resizedUsedHeight, false);
+
+        Bitmap combinedBitmap = Bitmap.createBitmap(resizedUsedWidth, resizedUsedHeight, resizedOriginalBitmap.getConfig());
         Canvas canvas = new Canvas(combinedBitmap);
-        canvas.drawBitmap(resizedOriginalBitmap, 0, 0, null);
-        canvas.drawBitmap(resizedOverlayBitmap, 0, 0, null);
+
+        canvas.drawColor(Color.WHITE); // 배경을 흰색으로 설정
+
+        int left = (resizedUsedWidth - resizedOriginalBitmap.getWidth()) / 2; // 가운데 정렬을 위해 left 좌표 계산
+        int top = (resizedUsedHeight - resizedOriginalBitmap.getHeight()) / 2; // 가운데 정렬을 위해 top 좌표 계산
+
+        canvas.drawBitmap(resizedOriginalBitmap, left, top, null);
+        canvas.drawBitmap(resizeUsedBitmap, 0, 0, null);
 
         // 흑백으로 변경
         ColorMatrix matrix = new ColorMatrix();
@@ -262,7 +302,7 @@ public class gifticon_touch_activity extends AppCompatActivity {
         Paint paint = new Paint();
         paint.setColorFilter(filter);
         canvas.drawBitmap(combinedBitmap, 0, 0, paint);
-        
+
         return combinedBitmap;
     }
 
@@ -277,4 +317,5 @@ public class gifticon_touch_activity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
