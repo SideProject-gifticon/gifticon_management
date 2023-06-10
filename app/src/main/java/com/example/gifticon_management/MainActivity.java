@@ -6,18 +6,30 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
+import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,6 +43,8 @@ import com.google.android.material.navigation.NavigationView;
 import java.io.ByteArrayOutputStream;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle barDrawerToggle;
-
-
+    AlarmManager alarmManager;
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
 
@@ -80,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new RecyclerviewAdapter();
         recyclerView.setAdapter(adapter);
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         mainDataViewModel = new ViewModelProvider(this).get(MainDataViewModel.class);
         mainDataViewModel.getAllMainData().observe(this, new Observer<List<MainData>>() {
@@ -88,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 //변화감지
                 dataList.clear();
                 adapter.setMainData(mainData);
+                registerAllAlarm(mainData); // 데이터에 변화가 생기면 알람 등록 및 수정
             }
         });
 //        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -193,11 +208,48 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+    }
 
+    private void registerAllAlarm(List<MainData> mainDataList){
+        int day = 3; // 일단 3일 후에 알람 오도록 설정
 
+        for(MainData m : mainDataList){
+            if(m.getIsUsed()){ // 이미 사용한 기프티콘
+                cancelAlarm(getApplicationContext(), m.getId()); // 알람 취소
+                continue;
+            }
+
+            int yy = m.getYy();
+            int mm = m.getMm();
+            int dd = m.getDd();
+
+            // 만료일로부터 3일 전의 시간 계산
+            Calendar alarmCalendar = new GregorianCalendar(yy,mm,dd); // 월은 0부터 시작하므로 1을 뺌
+            alarmCalendar.setTimeInMillis(alarmCalendar.getTimeInMillis());
+            alarmCalendar.add(Calendar.DAY_OF_MONTH, -day); // 만료일에서 3일을 뺌
+            alarmCalendar.add(Calendar.HOUR_OF_DAY, 9); // 12시는 좀 그러니까 아침 9시에 울리도록....?
+
+            // 알람 등록
+            registerAlarm(getApplicationContext(), m.getId(), alarmCalendar.getTimeInMillis());
+
+        }
 
     }
 
+    // 새로운 푸시 알람 등록
+    // 기프티콘 id = 알람의 request id
+    private void registerAlarm(Context context, int id, long expirationTime) {
+        Intent intent = new Intent(context, GiftExpirationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, expirationTime, pendingIntent);
+    }
+
+    private void cancelAlarm(Context context, int id) {
+        Intent intent = new Intent(context, GiftExpirationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
