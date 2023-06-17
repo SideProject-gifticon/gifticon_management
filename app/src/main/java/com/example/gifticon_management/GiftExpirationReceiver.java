@@ -16,10 +16,13 @@ public class GiftExpirationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // 알림 콘텐츠 만들기
+        String name = intent.getStringExtra("name");
+        long ex = intent.getLongExtra("ex", -1);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channelId")
                 .setSmallIcon(R.drawable.noti)
-                .setContentTitle("My notification")
-                .setContentText("Much longer text that cannot fit one line...")
+                .setContentTitle("기프티콘 만료일 알림")
+                .setContentText(name+"의 만료일이 "+ex+"일 남았어요")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         // 채널 만들기
@@ -31,6 +34,7 @@ public class GiftExpirationReceiver extends BroadcastReceiver {
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+        builder.setAutoCancel(true);
 
         // 알림 표시
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
