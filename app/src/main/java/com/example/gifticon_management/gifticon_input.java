@@ -129,7 +129,7 @@ public class gifticon_input extends AppCompatActivity {
                //dataList.addAll(database.mainDao().getAll());
                mainDataViewModel.insert(temp);
                //adapter.notifyDataSetChanged();
-               setResult(9001); // 확인 버튼 누르면 resultcode 9001을 메인 액티비티로 보냄
+               setResult(9002); // 확인 버튼 누르면 resultcode 9001을 메인 액티비티로 보냄
 
                new Handler().postDelayed(new Runnable() {
                    @Override
