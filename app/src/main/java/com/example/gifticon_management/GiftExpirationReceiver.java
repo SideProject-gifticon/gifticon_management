@@ -22,7 +22,7 @@ public class GiftExpirationReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channelId")
                 .setSmallIcon(R.drawable.noti)
                 .setContentTitle("기프티콘 만료일 알림")
-                .setContentText(name+"의 만료일이 "+ex+"일 남았어요")
+                .setContentText(name+"의 만료일이 "+"3일 남았어요")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         // 채널 만들기

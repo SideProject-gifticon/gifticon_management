@@ -63,8 +63,6 @@ public class MainDataRepository {
 
         private InsertMainDataAsyncTask(MainDao mainDao){
             this.mainDao = mainDao;
-            //this.mainData = mainData;
-
         }
 
         @Override
@@ -134,11 +132,9 @@ public class MainDataRepository {
         int dd = mainData.getDd();
 
         // 만료일로부터 3일 전의 시간 계산
-        Calendar alarmCalendar = new GregorianCalendar(yy, mm - 1, dd); // 월은 0부터 시작하므로 1을 뺌
+        Calendar alarmCalendar = new GregorianCalendar(yy, mm, dd);
         alarmCalendar.add(Calendar.DAY_OF_MONTH, -day); // 만료일에서 3일을 뺌
         alarmCalendar.set(Calendar.HOUR_OF_DAY, 9); // 아침 9시에 울리도록 설정
-
-        Log.d("Time",""+alarmCalendar.getTimeInMillis());
 
         Context context = MyApp.getInstance().getApplicationContext(); // 애플리케이션 컨텍스트 가져오기
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
