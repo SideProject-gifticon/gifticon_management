@@ -63,5 +63,10 @@
 
     </com.google.android.material.navigation.NavigationView>
 
+    <!-- 브로드캐스트 리시버 -->
+
+
+
+
 </androidx.drawerlayout.widget.DrawerLayout>
 

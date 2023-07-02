@@ -6,18 +6,30 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
+import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,6 +43,8 @@ import com.google.android.material.navigation.NavigationView;
 import java.io.ByteArrayOutputStream;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle barDrawerToggle;
-
-
+    AlarmManager alarmManager;
     List<MainData> dataList = new ArrayList<>();
     RoomDB database;
 
@@ -80,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new RecyclerviewAdapter();
         recyclerView.setAdapter(adapter);
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         mainDataViewModel = new ViewModelProvider(this).get(MainDataViewModel.class);
         mainDataViewModel.getAllMainData().observe(this, new Observer<List<MainData>>() {
@@ -88,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 //변화감지
                 dataList.clear();
                 adapter.setMainData(mainData);
+                //registerAllAlarm(mainData); // 데이터에 변화가 생기면 알람 등록 및 수정
             }
         });
 //        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -193,11 +208,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-
-
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -205,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.drawer_menu, menu);
         return true;
     }
+
+
 
     @Override // 네비게이션 뷰의 메뉴를 터치했을 때 실행
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
