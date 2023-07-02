@@ -32,10 +32,16 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
 
 
 
-    private List<MainData> dataList = new ArrayList<>();
-    private Activity context;
+    private List<MainData> dataList;
+   private Activity context;
     private RoomDB database;
 
+
+
+
+    public RecyclerviewAdapter(){
+        dataList = new ArrayList<>();
+    }
 
     public MainData getMainDataAt(int position){
         return dataList.get(position);
@@ -80,8 +86,6 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
         View view = inflater.inflate(R.layout.gifticon_ui, parent, false);
         RecyclerviewAdapter.ViewHolder vh = new RecyclerviewAdapter.ViewHolder(view);
 
-
-        // 터치 이벤트
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,34 +163,6 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapte
             return textView;
         }
     }
-
-
-//    private void showDialog(int pos){
-//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//        builder.setTitle("선택해주세요");
-//        builder.setMessage("삭제 하실겁니까?");
-//
-//        //다이얼로그 이벤트 처리
-//        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                //확인 누르면 삭제
-//
-//            }
-//        });
-//
-//        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialogInterface, int i) {
-//                //취소 로직
-//
-//            }
-//        });
-//
-//        //다이얼로그 표시
-//        AlertDialog dialog = builder.create();
-//        dialog.show();
-//    }
 
 
 

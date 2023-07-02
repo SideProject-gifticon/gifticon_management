@@ -15,6 +15,11 @@
         android:name=".MyApp"
         tools:targetApi="31">
         <activity
+            android:name=".MainActivity2"
+            android:exported="true">
+
+        </activity>
+        <activity
             android:name=".ImgTouchActivity"
             android:exported="false" />
         <activity
