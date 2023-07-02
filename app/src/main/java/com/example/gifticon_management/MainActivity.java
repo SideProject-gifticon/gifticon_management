@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         //barDrawerToggle.syncState();
 
 
-        database = RoomDB.getInstance(this);
+        //database = RoomDB.getInstance(this);
         //dataList = database.mainDao().getAll();
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -186,8 +186,8 @@ public class MainActivity extends AppCompatActivity {
         activityResultLauncher = registerForActivityResult( // 기프티콘 추가 액티비티에서 확인 버튼 누르면 실행됨
                 new ActivityResultContracts.StartActivityForResult(), result -> {
                     if(result.getResultCode()==9001){
-                        dataList.clear();
-                        adapter.setMainData(dataList);
+                        //dataList.clear();
+                        //adapter.setMainData(dataList);
 
                         adapter.notifyDataSetChanged(); // 새로 추가한 데이터 갱신
                     }
